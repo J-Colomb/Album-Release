@@ -1,0 +1,30 @@
+
+import sys
+import urllib
+#import urllib2
+from urllib.request import urlopen
+url = 'http://musicbrainz.org/ws/2/artist/?query=artist:fred'
+s = urlopen(url)
+contents = s.read()
+file = open("xmlimporttest.xml", 'wb')
+file.write(contents)
+file.close()
+'''
+import xml.etree.ElementTree as etree
+tree = etree.parse('xmlimporttest.xml')
+root = tree.getroot()
+print(root)
+#print(root.tag)
+
+'''
+'''
+for child in root:		
+	for children in child:
+		if children.text == 'DVD':
+			print(child.attrib)
+		#print(children.text)
+	#if child.tag == 
+	#print(child.attrib)
+	#print(child.tag)
+'''
+	
