@@ -1,43 +1,130 @@
-
 import sys
 import urllib
 #import urllib2
 from urllib.request import urlopen
-url = 'http://musicbrainz.org/ws/2/artist/?query=artist:fred'
+
+search_query = input("What would you like to search on Music Brainz?")
+
+url = 'http://musicbrainz.org/ws/2/artist/?query=artist:' + repr(search_query)
+
+
+#root url is http://musicbrainz.org/ws/2/
+
+#url = 'http://musicbrainz.org/ws/2/artist/?query=artist:led+zeppelin'
+
 s = urlopen(url)
 contents = s.read()
 file = open("xmlimporttest.xml", 'wb')
 file.write(contents)
 file.close()
 
-'''
-#error incase of HTTP%)# error (service overload)
-
-'''
->>> req = urllib.request.Request('http://www.python.org/fish.html')
->>> try:
-...     urllib.request.urlopen(req)
-... except urllib.error.HTTPError as e:
-...     print(e.code)
-...     print(e.read())  
-...
-404
-b'<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">\n\n\n<html
-  ...
-  <title>Page Not Found</title>\n
-  ...
-
-
-
-'''
 import xml.etree.ElementTree as etree
 tree = etree.parse('xmlimporttest.xml')
 root = tree.getroot()
-print(root)
-#print(root.tag)
+i = 0
+for second in root:
+	for third in second:
+		if i < 1:
+			artistidvariable = third.attrib['id']
+		i = i + 1
+		
+print("and the artist you chose is...")
+print(artistidvariable)
+
+
+url2 = 'http://musicbrainz.org/ws/2/release/?query=arid:' + artistidvariable
+#url2 ='http://musicbrainz.org/ws/2/release/?query=arid:678d88b2-87b0-403b-b63d-5da7465aecc3'
+
+q = urlopen(url2)
+contents2 = q.read()
+file = open("xmlimporttest.xml", 'wb')
+file.write(contents2)
+file.close()
+
+tree2 = etree.parse('xmlimporttest.xml')
+root2 = tree2.getroot()
+
+j = 0
+for second in root2:
+	for third in second:
+		for fourth in third:
+			if fourth.tag[36:] == 'title':
+				if j < 1:
+					albumreleasename = fourth.text
+				j = j + 1
+				#print(fourth.text)
+			#print(fourth.tag[36:])
+
+print("and the album you chose is...")
+print(albumreleasename)
+
 
 '''
+#print(dir(root))
+for child in root:
+	for children in child:
+		print(dir(children))
+		#print(children.getchildren())
+	#print(child.getchildren())
+	#print(child.findall('artist-list'))
+#print(root.getchildren())
+'''
+'''
+for second in root:
+	for third in second:
+		for fourth in third:
+			if fourth.tag[36:] == 'name':
+				print(fourth.text)
+'''
+
+
+'''
+a = 0
+for child in root:
+	#print(child.attrib)
+	for children in child:
+		a = a+ 1
+		print(a)
+'''
+'''
+for child in root:
+	for children in child:
+		for gran in children:
+			print(gran.tag[36:])
+'''
+
+#import xml.dom.minidom as minidom
+#attributeref ::= primary "." identifier
+#artistnumber = tree.find('artist')
+#artistlist = tree.find(".//artist-list[@count=" + '
+#testvalue = tree.find('metadata')
+#print(testvalue)
+#testvaluetwo = testvalue.get('created', None)
+#print(testvaluetwo)
+#print(artistnumber.getAttribute('id'))
+'''
+for child in root:
+	a = 0
+	for children in child:
+		print("_______________________________________")
+		a = a + 1
+		print(a)
+		print(children.attrib)
+		#for gran in children:
+			#print(gran.text)
+		#print(children.tag)
+		#print(children.attrib)
+		#print(children.text)
+		#if children.attrib == 'id':
+			#print("this works")
+		#print(children.attrib)
+		#print(children.text)
+
+		
+#print(root.attrib)
+#print(root.tag)
+'''
+
 '''
 for child in root:		
 	for children in child:
@@ -49,3 +136,21 @@ for child in root:
 	#print(child.tag)
 '''
 	
+'''
+#error message incase of error 503 (service overload)
+from urllib.request import Request, urlopen
+from urllib.error import  URLError
+req = Request(someurl)
+try:
+    response = urlopen(req)
+except URLError as e:
+    if hasattr(e, 'reason'):
+        print('We failed to reach a server.')
+        print('Reason: ', e.reason)
+    elif hasattr(e, 'code'):
+        print('The server couldn\'t fulfill the request.')
+        print('Error code: ', e.code)
+else:
+    # everything is fine
+
+'''
